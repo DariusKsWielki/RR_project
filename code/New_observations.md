@@ -1,3 +1,10 @@
+# Reproducible research project 
+
+# Data Analisys on Mental Health in Tech
+
+## Import all needed libraries
+
+
 ```python
 #!/usr/bin/env python
 # coding: utf-8
@@ -15,10 +22,14 @@ import warnings
 warnings.filterwarnings('ignore')
 ```
 
+## Import new observation data
+
 
 ```python
 data1 = pd.read_excel('C:/Users/Dom/Desktop/Data/Mental health in tech data.xlsx')
 ```
+
+## Cleaning Data
 
 
 ```python
@@ -37,10 +48,7 @@ renamed_columns = ['self_empl_flag', 'comp_no_empl', 'tech_comp_flag', 'tech_rol
                   'yes:condition_diagnosed', 'mh_sought_proffes_treatm', 'mh_eff_treat_impact_on_work', 'mh_not_eff_treat_impact_on_work',
                   'age', 'sex', 'country_live', 'live_us_teritory', 'country_work', 'work_us_teritory', 'work_position', 'remote_flag']
 data1.columns = renamed_columns
-```
 
-
-```python
 # Sex column needs to be recoded
 data1['sex'].replace(to_replace = ['Male', 'male', 'Male ', 'M', 'm',
        'man', 'Cis male', 'Male.', 'male 9:1 female, roughly', 'Male (cis)', 'Man', 'Sex is male',
@@ -63,22 +71,17 @@ data1['sex'].replace(to_replace = ['Bigender', 'non-binary', 'Other/Transfeminin
        'Nonbinary', 'human', 'Unicorn', 'Genderqueer',
        'Genderflux demi-girl', 'Transgender woman'], value = 3, inplace = True)
 
-```
-
-
-```python
 # Recode Comp size 
 data1['comp_no_empl'].replace(to_replace = ['More than 1000'], value = '>1000', inplace = True)
-```
 
-
-```python
 # People will take the average age of the dataset (the correct calculated one, w/out outliers)
 mean_age = data1[(data1['age'] >= 18) | (data1['age'] <= 75)]['age'].mean()
 data1['age'].replace(to_replace = data1[(data1['age'] < 18) | (data1['age'] > 75)]['age'].tolist(),
                           value = mean_age, inplace = True)
 
 ```
+
+### Missing values
 
 
 ```python
@@ -91,7 +94,7 @@ sns.heatmap(data = data1.isna());
 ```
 
 
-![png](output_6_0.png)
+![png](output_9_0.png)
 
 
 
@@ -109,14 +112,18 @@ imp = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
 imp.fit(data1)
 imp_data = pd.DataFrame(data = imp.transform(data1), columns = data1.columns)
 
+```
+
+### Encoding
+
+
+```python
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 
 from sklearn.compose import ColumnTransformer
-```
 
 
-```python
 # ----------- ENCODING -----------
 # Split data into 2 datasets: one that needs to be encoded, one that doesnt need to
 cols = [x for x in imp_data.columns if x not in ['age', 'why/why_not', 'why/why_not2', 'country_live',
@@ -198,6 +205,8 @@ prep_data['tech_flag'].replace(to_replace = flat_list, value = 1, inplace = True
 prep_data['tech_flag'].replace(to_replace = remain_list, value = 0, inplace = True)
 ```
 
+## Plotting
+
 
 ```python
 import matplotlib as mpl
@@ -236,7 +245,7 @@ ax2.legend(['Not in Tech', 'In Tech']);
 ```
 
 
-![png](output_10_0.png)
+![png](output_15_0.png)
 
 
 
@@ -301,7 +310,7 @@ ax1.legend(['Male', 'Female', 'Other']);
 
 
 
-![png](output_12_1.png)
+![png](output_17_1.png)
 
 
 
@@ -345,7 +354,7 @@ ax1.legend();
 
 
 
-![png](output_13_1.png)
+![png](output_18_1.png)
 
 
 
@@ -453,7 +462,7 @@ ax[2][1].set_title('Neg. Conseq for Coworkers with MH Disorders', pad = 14, font
 ```
 
 
-![png](output_14_0.png)
+![png](output_19_0.png)
 
 
 
@@ -527,7 +536,7 @@ ax[1][1].set_title('Are you relaxed of talking MHD with supervisors?', pad = 14,
 ```
 
 
-![png](output_15_0.png)
+![png](output_20_0.png)
 
 
 
@@ -571,7 +580,7 @@ ax2.set_title('Have you observed/experienced badly response to a MHD?', pad = 14
 ```
 
 
-![png](output_16_0.png)
+![png](output_21_0.png)
 
 
 
@@ -599,5 +608,5 @@ plt.title('How willing would you be to share with friends/family that you have a
 ```
 
 
-![png](output_17_0.png)
+![png](output_22_0.png)
 

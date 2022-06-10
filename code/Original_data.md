@@ -1,8 +1,13 @@
+# Reproducible research project 
+
+# Data Analisys on Mental Health in Tech
+
+## Import all needed libraries
+
+
 ```python
 #!/usr/bin/env python
 # coding: utf-8
-
-
 
 # Imports
 import pandas as pd
@@ -15,10 +20,14 @@ import warnings
 warnings.filterwarnings('ignore')
 ```
 
+## Import original data
+
 
 ```python
 survey_2016 = pd.read_csv('C:/Users/Dom/Desktop/Data/mental-heath-in-tech-2016_20161114.csv')
 ```
+
+## Cleaning Data
 
 
 ```python
@@ -38,10 +47,6 @@ renamed_columns = ['self_empl_flag', 'comp_no_empl', 'tech_comp_flag', 'tech_rol
                   'age', 'sex', 'country_live', 'live_us_teritory', 'country_work', 'work_us_teritory', 'work_position', 'remote_flag']
 survey_2016.columns = renamed_columns
 
-```
-
-
-```python
 # Sex column needs to be recoded (number of unique values = 70)
 survey_2016['sex'].replace(to_replace = ['Male', 'male', 'Male ', 'M', 'm',
        'man', 'Cis male', 'Male.', 'male 9:1 female, roughly', 'Male (cis)', 'Man', 'Sex is male',
@@ -64,10 +69,6 @@ survey_2016['sex'].replace(to_replace = ['Bigender', 'non-binary', 'Other/Transf
        'Nonbinary', 'human', 'Unicorn', 'Genderqueer',
        'Genderflux demi-girl', 'Transgender woman'], value = 3, inplace = True)
 
-```
-
-
-```python
 # Recode Comp size & country columns (for ease when doing plots)
 survey_2016['comp_no_empl'].replace(to_replace = ['More than 1000'], value = '>1000', inplace = True)
 survey_2016['country_live'].replace(to_replace = ['United States of America'], value = 'USA', inplace = True)
@@ -75,10 +76,6 @@ survey_2016['country_live'].replace(to_replace = ['United Kingdom'], value = 'UK
 survey_2016['country_work'].replace(to_replace = ['United States of America'], value = 'USA', inplace = True)
 survey_2016['country_work'].replace(to_replace = ['United Kingdom'], value = 'UK', inplace = True)
 
-```
-
-
-```python
 # Max age is 323, min age is 3.
 # There are only 5 people that have weird ages (3yo, 15yo, or 99yo or 323 yo.) 
 # These people will take the average age of the dataset (the correct calculated one, w/out outliers)
@@ -87,6 +84,8 @@ survey_2016['age'].replace(to_replace = survey_2016[(survey_2016['age'] < 18) | 
                           value = mean_age, inplace = True)
 
 ```
+
+### Missing values
 
 
 ```python
@@ -99,7 +98,7 @@ sns.heatmap(data = survey_2016.isna());
 ```
 
 
-![png](output_6_0.png)
+![png](output_9_0.png)
 
 
 
@@ -119,6 +118,8 @@ imp_data = pd.DataFrame(data = imp.transform(survey_2016), columns = survey_2016
 
 ```
 
+### Encoding
+
 
 ```python
 from sklearn.preprocessing import OneHotEncoder
@@ -126,11 +127,6 @@ from sklearn.preprocessing import LabelEncoder
 
 from sklearn.compose import ColumnTransformer
 
-#columnTransformer = ColumnTransformer([('encoder', OneHotEncoder(), column_mask)],     remainder='passthrough')
-```
-
-
-```python
 # ----------- ENCODING -----------
 # Split data into 2 datasets: one that needs to be encoded, one that doesnt need to
 cols = [x for x in imp_data.columns if x not in ['age', 'why/why_not', 'why/why_not2', 'country_live',
@@ -220,6 +216,8 @@ prep_data['tech_flag'].replace(to_replace = flat_list, value = 1, inplace = True
 prep_data['tech_flag'].replace(to_replace = remain_list, value = 0, inplace = True)
 ```
 
+## Plotting
+
 
 ```python
 import matplotlib as mpl
@@ -257,7 +255,7 @@ ax2.legend(['Not in Tech', 'In Tech']);
 ```
 
 
-![png](output_11_0.png)
+![png](output_15_0.png)
 
 
 
@@ -320,7 +318,7 @@ ax1.legend(['Male', 'Female', 'Other']);
 
 
 
-![png](output_13_1.png)
+![png](output_17_1.png)
 
 
 
@@ -364,7 +362,7 @@ ax1.legend();
 
 
 
-![png](output_14_1.png)
+![png](output_18_1.png)
 
 
 
@@ -472,13 +470,11 @@ ax[2][1].set_title('Neg. Conseq for Coworkers with MH Disorders', pad = 14, font
 ```
 
 
-![png](output_15_0.png)
+![png](output_19_0.png)
 
 
 
 ```python
-
-
 fig, ax = plt.subplots(figsize = (16, 8), ncols=2, nrows=2)
 plt.subplots_adjust(left=0.125, right=0.9, bottom=0.1, top = 0.9, wspace=0, hspace = 0.3)
 plt.suptitle('Discussing Mental Health at Work', fontsize = 25, y = 1.04)
@@ -549,7 +545,7 @@ ax[1][1].set_title('Are you relaxed of talking MHD with supervisors?', pad = 14,
 ```
 
 
-![png](output_16_0.png)
+![png](output_20_0.png)
 
 
 
@@ -594,7 +590,7 @@ ax2.set_title('Have you observed/experienced badly response to a MHD?', pad = 14
 ```
 
 
-![png](output_17_0.png)
+![png](output_21_0.png)
 
 
 
@@ -622,5 +618,5 @@ plt.title('How willing would you be to share with friends/family that you have a
 ```
 
 
-![png](output_18_0.png)
+![png](output_22_0.png)
 

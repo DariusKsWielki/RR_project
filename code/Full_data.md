@@ -1,3 +1,10 @@
+# Reproducible research project 
+
+# Data Analisys on Mental Health in Tech
+
+## Import all needed libraries
+
+
 ```python
 #!/usr/bin/env python
 # coding: utf-8
@@ -15,22 +22,18 @@ import warnings
 warnings.filterwarnings('ignore')
 ```
 
+## Import all data
+
 
 ```python
 survey_2016 = pd.read_csv('C:/Users/Dom/Desktop/Data/mental-heath-in-tech-2016_20161114.csv')
 data1 = pd.read_excel('C:/Users/Dom/Desktop/Data/Mental health in tech data.xlsx')
-```
 
-
-```python
 # Finally here we merge both data sets to easy compare results between them. 
-```
-
-
-```python
-
 full_data = pd.concat([survey_2016, data1])
 ```
+
+## Cleaning Data
 
 
 ```python
@@ -49,10 +52,7 @@ renamed_columns = ['self_empl_flag', 'comp_no_empl', 'tech_comp_flag', 'tech_rol
                   'yes:condition_diagnosed', 'mh_sought_proffes_treatm', 'mh_eff_treat_impact_on_work', 'mh_not_eff_treat_impact_on_work',
                   'age', 'sex', 'country_live', 'live_us_teritory', 'country_work', 'work_us_teritory', 'work_position', 'remote_flag', 'number_of_participant']
 full_data.columns = renamed_columns
-```
 
-
-```python
 # Sex column needs to be recoded (number of unique values = 70)
 full_data['sex'].replace(to_replace = ['Male', 'male', 'Male ', 'M', 'm',
        'man', 'Cis male', 'Male.', 'male 9:1 female, roughly', 'Male (cis)', 'Man', 'Sex is male',
@@ -75,10 +75,6 @@ full_data['sex'].replace(to_replace = ['Bigender', 'non-binary', 'Other/Transfem
        'Nonbinary', 'human', 'Unicorn', 'Genderqueer',
        'Genderflux demi-girl', 'Transgender woman'], value = 3, inplace = True)
 
-```
-
-
-```python
 # Recode Comp size & country columns (for ease when doing plots)
 full_data['comp_no_empl'].replace(to_replace = ['More than 1000'], value = '>1000', inplace = True)
 full_data['country_live'].replace(to_replace = ['United States of America'], value = 'USA', inplace = True)
@@ -99,6 +95,8 @@ full_data['age'].replace(to_replace = full_data[(full_data['age'] < 18) | (full_
 
 ```
 
+### Missing values
+
 
 ```python
 # ----------- MISSING VALUES -----------
@@ -109,7 +107,7 @@ sns.heatmap(data = full_data.isna());
 ```
 
 
-![png](output_8_0.png)
+![png](output_10_0.png)
 
 
 
@@ -129,16 +127,15 @@ imp.fit(full_data)
 imp_data = pd.DataFrame(data = imp.transform(full_data), columns = full_data.columns)
 ```
 
+### Encoding
+
 
 ```python
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 
 from sklearn.compose import ColumnTransformer
-```
 
-
-```python
 # ----------- ENCODING -----------
 # Split data into 2 datasets: one that needs to be encoded, one that doesnt need to
 cols = [x for x in imp_data.columns if x not in ['age', 'why/why_not', 'why/why_not2', 'country_live',
@@ -228,6 +225,8 @@ prep_data['tech_flag'].replace(to_replace = flat_list, value = 1, inplace = True
 prep_data['tech_flag'].replace(to_replace = remain_list, value = 0, inplace = True)
 ```
 
+## Plotting
+
 
 ```python
 import matplotlib as mpl
@@ -265,7 +264,7 @@ ax2.legend(['Not in Tech', 'In Tech']);
 ```
 
 
-![png](output_13_0.png)
+![png](output_16_0.png)
 
 
 
@@ -334,7 +333,7 @@ ax1.legend(['Male', 'Female', 'Other']);
 
 
 
-![png](output_16_1.png)
+![png](output_19_1.png)
 
 
 
@@ -384,7 +383,7 @@ ax1.legend();
 
 
 
-![png](output_18_1.png)
+![png](output_21_1.png)
 
 
 
@@ -492,7 +491,7 @@ ax[2][1].set_title('Neg. Conseq for Coworkers with MH Disorders', pad = 14, font
 ```
 
 
-![png](output_19_0.png)
+![png](output_22_0.png)
 
 
 
@@ -572,7 +571,7 @@ ax[1][1].set_title('Are you relaxed of talking MHD with supervisors?', pad = 14,
 ```
 
 
-![png](output_21_0.png)
+![png](output_24_0.png)
 
 
 
@@ -616,7 +615,7 @@ ax2.set_title('Have you observed/experienced badly response to a MHD?', pad = 14
 ```
 
 
-![png](output_22_0.png)
+![png](output_25_0.png)
 
 
 
@@ -643,5 +642,5 @@ plt.title('How willing would you be to share with friends/family that you have a
 ```
 
 
-![png](output_23_0.png)
+![png](output_26_0.png)
 
